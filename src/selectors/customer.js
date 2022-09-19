@@ -150,3 +150,11 @@ export const selectPointsProgram = state => {
   const { orderType } = state.data.order
   return orderType ? selectCustomerPointsProgram(orderType)(state) : null
 }
+
+export const selectCustomerRecurrences = state => {
+  return state.data.customer.recurrences.entities != null ?
+    state.data.customer.recurrences.entities.recurrences :
+    null
+}
+
+export const selectCustomerRecurrencesLoadingStatus = state => state.data.customer.recurrences.loading

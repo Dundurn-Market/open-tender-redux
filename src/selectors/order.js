@@ -27,6 +27,8 @@ export const selectAutoSelect = state => {
   return orderType && serviceType ? autoSelect[orderType][serviceType] : false
 }
 
+export const selectOrderFrequency = state => state.data.order.orderFrequency
+
 export const selectRequestedAt = state =>
   state.data.order.requestedAt === 'asap'
     ? 'ASAP'

@@ -24,6 +24,7 @@ import {
 import { refreshRevenueCenter, setAlert } from './order'
 import { fetchMenu } from './menu'
 import { loginCustomer } from './customer/account'
+import { RecurrenceApi } from '../index'
 
 // action creators
 
@@ -166,7 +167,7 @@ const handleOrderErrors = (err, preparedOrder, dispatch) => {
 }
 
 export const submitOrder = () => async (dispatch, getState) => {
-  const { api } = getState().config
+  const { api, recurrenceApi } = getState().config
   if (!api) return
   dispatch(pending(SUBMIT_ORDER))
   const alert = { type: 'working', args: { text: 'Submitting your order...' } }
@@ -177,6 +178,24 @@ export const submitOrder = () => async (dispatch, getState) => {
     const auth = getState().data.customer.account.auth
     const { email, password } = preparedOrder.customer
     if (password && !auth) await dispatch(loginCustomer(email, password))
+
+    // if customer is logged in we send recurrence data to our backend
+    if (auth) {
+      const bearerToken = getState().data.customer.account.auth.access_token;
+
+      const data = {
+        revenue_center_id: preparedOrder.revenue_center_id,
+        service_type: preparedOrder.service_type,
+        requested_at: preparedOrder.requested_at,
+        cart: preparedOrder.cart,
+        customer_id: preparedOrder.customer.customer_id,
+        credit_card_ids: preparedOrder.tenders.map((tender) => tender.customer_card_id)
+      }
+
+      const recurrenceResponse = await recurrenceApi.postOrder(data, bearerToken)
+      console.log(recurrenceResponse)
+    }
+
     dispatch(setAlert({ type: 'close' }))
     dispatch(fulfill(SUBMIT_ORDER, completedOrder))
   } catch (err) {

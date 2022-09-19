@@ -42,6 +42,7 @@ import {
   CHECKOUT,
   SET_TABLE,
   SET_PREP_TYPE,
+  SET_DEFAULT_ORDER_FREQ
 } from '../reducers/order'
 import { setMenuItems } from './menuItems'
 import { updateForm } from './checkout'
@@ -114,6 +115,10 @@ export const setAddress = address => ({
 export const setRequestedAt = requestedAt => ({
   type: SET_REQUESTED_AT,
   payload: requestedAt,
+})
+export const setDefaultOrderFrequency = orderFrequency => ({
+  type: SET_DEFAULT_ORDER_FREQ,
+  payload: orderFrequency,
 })
 export const setRevenueCenter = revenueCenter => ({
   type: SET_REVENUE_CENTER,

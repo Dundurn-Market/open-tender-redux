@@ -20,6 +20,7 @@ const initState = {
   revenueCenter: null,
   table: null,
   prepType: null,
+  orderFrequency: 'SINGLE',
   requestedAt: 'asap',
   address: null,
   currentVendor: null,
@@ -56,6 +57,7 @@ export const SET_TABLE = `${NAME}/setTable`
 export const SET_PREP_TYPE = `${NAME}/setPrepType`
 export const SET_ADDRESS = `${NAME}/setAddress`
 export const SET_REQUESTED_AT = `${NAME}/setRequestedAt`
+export const SET_DEFAULT_ORDER_FREQ = `${NAME}/setDefaultSubscriptionFreq`
 export const SET_CART = `${NAME}/setCart`
 export const SET_CURRENT_VENDOR = `${NAME}/setCurrentVendor`
 export const SET_CURRENT_CATEGORY = `${NAME}/setCurrentCategory`
@@ -161,6 +163,9 @@ export default (state = initState, action) => {
         i => !i.message.includes('Requested time')
       )
       return { ...state, requestedAt: action.payload, messages }
+    }
+    case SET_DEFAULT_ORDER_FREQ: {
+      return { ...state, orderFrequency: action.payload}
     }
     case SET_REVENUE_CENTER: {
       const revenueCenter = action.payload

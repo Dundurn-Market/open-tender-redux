@@ -16,6 +16,7 @@ import thanx from './thanx'
 import qrcode from './qrcode'
 import communicationPreferences from './communicationPreferences'
 import fcmToken from './fcmToken'
+import recurrences from './recurrences'
 
 const customerReducer = combineReducers({
   account,
@@ -35,6 +36,7 @@ const customerReducer = combineReducers({
   qrcode,
   communicationPreferences,
   fcmToken,
+  recurrences
 })
 
 export default customerReducer
