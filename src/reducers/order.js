@@ -66,6 +66,7 @@ export const ADD_ITEM = `${NAME}/addItemToCart`
 export const REMOVE_ITEM = `${NAME}/removeItemFromCart`
 export const INCREMENT_ITEM = `${NAME}/incrementItemInCart`
 export const DECREMENT_ITEM = `${NAME}/decrementItemInCart`
+export const SET_ITEM_FREQUENCY = `${NAME}/setItemFrequency`
 export const ADD_MESSAGE = `${NAME}/addMessage`
 export const REMOVE_MESSAGE = `${NAME}/removeMessage`
 
@@ -220,6 +221,16 @@ export default (state = initState, action) => {
       const { index } = action.payload
       const { cart, cartCounts } = decrementItem([...state.cart], index)
       return { ...state, cart, cartCounts }
+    }
+    case SET_ITEM_FREQUENCY: {
+      const { index } = action.payload
+      const cart = [...state.cart]
+      const realIndex = cart.findIndex((item) => item.index === index)
+      if (realIndex > -1) {
+        cart[realIndex] = {...action.payload}
+        return {...state, cart}
+      }
+      return state
     }
     case `${FETCH_REVENUE_CENTER}/pending`:
       return { ...state, loading: 'pending' }

@@ -42,7 +42,7 @@ import {
   CHECKOUT,
   SET_TABLE,
   SET_PREP_TYPE,
-  SET_DEFAULT_ORDER_FREQ
+  SET_DEFAULT_ORDER_FREQ, SET_ITEM_FREQUENCY
 } from '../reducers/order'
 import { setMenuItems } from './menuItems'
 import { updateForm } from './checkout'
@@ -162,6 +162,10 @@ export const incrementItemInCart = item => ({
 })
 export const decrementItemInCart = item => ({
   type: DECREMENT_ITEM,
+  payload: item,
+})
+export const setCartItemFrequency = item => ({
+  type: SET_ITEM_FREQUENCY,
   payload: item,
 })
 export const addMessage = message => ({

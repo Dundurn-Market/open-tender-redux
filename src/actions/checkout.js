@@ -189,7 +189,8 @@ export const submitOrder = () => async (dispatch, getState) => {
         requested_at: preparedOrder.requested_at,
         cart: preparedOrder.cart,
         customer_id: preparedOrder.customer.customer_id,
-        credit_card_ids: preparedOrder.tenders.map((tender) => tender.customer_card_id)
+        credit_card_ids: preparedOrder.tenders.map((tender) => tender.customer_card_id),
+        order_id: completedOrder.order_id
       }
 
       const recurrenceResponse = await recurrenceApi.postOrder(data, bearerToken)
