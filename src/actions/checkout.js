@@ -24,7 +24,7 @@ import {
 import { refreshRevenueCenter, setAlert } from './order'
 import { fetchMenu } from './menu'
 import { loginCustomer } from './customer/account'
-import { RecurrenceApi } from '../index'
+import { fetchCustomerOrders, fetchCustomerRecurrences, RecurrenceApi } from '../index'
 
 // action creators
 
@@ -179,8 +179,10 @@ export const submitOrder = () => async (dispatch, getState) => {
     const { email, password } = preparedOrder.customer
     if (password && !auth) await dispatch(loginCustomer(email, password))
 
-    // if customer is logged in we send recurrence data to our backend
-    if (auth) {
+    let hasRecurrences = !!preparedOrder.cart.find((item) => item.frequency !== 'SINGLE')
+
+    // if the order has recurrences and customer is logged in we send recurrence data to our backend
+    if (hasRecurrences && auth) {
       const bearerToken = getState().data.customer.account.auth.access_token;
 
       const data = {
@@ -193,8 +195,14 @@ export const submitOrder = () => async (dispatch, getState) => {
         order_id: completedOrder.order_id
       }
 
-      const recurrenceResponse = await recurrenceApi.postOrder(data, bearerToken)
-      console.log(recurrenceResponse)
+      const orderId = getState().data.order.orderId
+      if (orderId) {
+        const recurrenceResponse = await recurrenceApi.editOrder(orderId, data, bearerToken)
+      } else {
+        const recurrenceResponse = await recurrenceApi.postOrder(data, bearerToken)
+      }
+      dispatch(fetchCustomerRecurrences())
+      dispatch(fetchCustomerOrders())
     }
 
     dispatch(setAlert({ type: 'close' }))

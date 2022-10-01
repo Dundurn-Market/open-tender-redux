@@ -64,6 +64,7 @@ export const SET_CURRENT_CATEGORY = `${NAME}/setCurrentCategory`
 export const SET_CURRENT_ITEM = `${NAME}/setCurrentItem`
 export const ADD_ITEM = `${NAME}/addItemToCart`
 export const REMOVE_ITEM = `${NAME}/removeItemFromCart`
+export const REMOVE_ITEM_BY_ID = `${NAME}/removeItemFromCartById`
 export const INCREMENT_ITEM = `${NAME}/incrementItemInCart`
 export const DECREMENT_ITEM = `${NAME}/decrementItemInCart`
 export const SET_ITEM_FREQUENCY = `${NAME}/setItemFrequency`
@@ -209,6 +210,11 @@ export default (state = initState, action) => {
     }
     case REMOVE_ITEM: {
       const { index } = action.payload
+      const { cart, cartCounts } = removeItem([...state.cart], index)
+      return { ...state, cart, cartCounts }
+    }
+    case REMOVE_ITEM_BY_ID: {
+      const index = state.cart.findIndex((item) => item.id === action.payload.id)
       const { cart, cartCounts } = removeItem([...state.cart], index)
       return { ...state, cart, cartCounts }
     }

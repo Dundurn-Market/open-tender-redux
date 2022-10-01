@@ -88,11 +88,24 @@ class RecurrenceApi {
   }
 
   postOrder(data, bearerToken) {
-    return this.request('/cart/', 'POST', data, null, bearerToken)
+    return this.request('/recurring/cart/', 'POST', data, null, bearerToken)
   }
 
-  getRecurrences(bearerToken) {
-    return this.request('/', 'GET', null, null, bearerToken)
+  editOrder(orderId, data, bearerToken) {
+    return this.request(`/recurring/cart/${orderId}`, 'POST', data, null, bearerToken)
+  }
+
+  deleteOrder(orderId, bearerToken) {
+    return this.request(`/orders/${orderId}`, 'DELETE', null, null, bearerToken)
+  }
+
+  async getRecurrences(bearerToken) {
+    const recurrences = await this.request('/recurring/', 'GET', null, null, bearerToken)
+    return recurrences.recurrences? Object.values(recurrences.recurrences) : recurrences
+  }
+
+  deleteRecurrence(recurrenceId, bearerToken) {
+    return this.request(`/recurring/${recurrenceId}`, 'DELETE', null, null, bearerToken)
   }
 }
 

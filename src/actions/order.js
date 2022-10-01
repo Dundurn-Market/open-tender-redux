@@ -1,5 +1,6 @@
 import {
   rehydrateCart,
+  rehydrateCartWithRecurrences,
   rehydrateCheckoutForm,
   makeFirstRequestedAt,
   makeFirstTimes,
@@ -42,7 +43,7 @@ import {
   CHECKOUT,
   SET_TABLE,
   SET_PREP_TYPE,
-  SET_DEFAULT_ORDER_FREQ, SET_ITEM_FREQUENCY
+  SET_DEFAULT_ORDER_FREQ, SET_ITEM_FREQUENCY, REMOVE_ITEM_BY_ID
 } from '../reducers/order'
 import { setMenuItems } from './menuItems'
 import { updateForm } from './checkout'
@@ -250,10 +251,12 @@ export const refreshRevenueCenter =
     }
   }
 
-export const editOrder = order => async (dispatch, getState) => {
-  const { api } = getState().config
+export const editOrder = (order, openSidebar = true) => async (dispatch, getState) => {
+  const { api, recurrenceApi } = getState().config
   if (!api) return
   const alert = { type: 'working', args: { text: 'Building your order...' } }
+  const bearerToken = getState().data.customer.account.auth ?
+    getState().data.customer.account.auth.access_token : null
   dispatch(setAlert(alert))
   dispatch(pending(EDIT_ORDER))
   try {
@@ -268,7 +271,8 @@ export const editOrder = order => async (dispatch, getState) => {
     const revenueCenterId = revenue_center.revenue_center_id
     const revenueCenter = await api.getLocation(revenueCenterId)
     const menuItems = await api.getMenuItems(revenueCenterId, serviceType)
-    const { cart, cartCounts } = rehydrateCart(menuItems, order.cart)
+    const recurrences = bearerToken? await recurrenceApi.getRecurrences(bearerToken) : []
+    const { cart, cartCounts } = rehydrateCartWithRecurrences(menuItems, order, recurrences)
     dispatch(setMenuItems(menuItems))
     const form = rehydrateCheckoutForm(order)
     dispatch(updateForm(form))
@@ -286,7 +290,10 @@ export const editOrder = order => async (dispatch, getState) => {
       cartCounts,
     }
     dispatch(fulfill(EDIT_ORDER, payload))
-    dispatch(setAlert({ type: 'closeAndSidebar' }))
+    if (openSidebar)
+      dispatch(setAlert({ type: 'closeAndSidebar' }))
+    else
+      dispatch(setAlert({ type: 'close' }))
   } catch (err) {
     dispatch(resetAlert())
     dispatch(addMessage('Something went wrong. Please contact support.'))
@@ -346,3 +353,11 @@ export const reorderPastOrder =
       dispatch(reject(REORDER, null))
     }
   }
+
+  const removeFromCartById = item => ({ type: REMOVE_ITEM_BY_ID, payload: item })
+
+
+export const removeItemFromCartById = item => (dispatch, getState) => {
+  dispatch(removeFromCartById(item))
+  return getState().data.order.cart
+}

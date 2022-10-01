@@ -29,6 +29,7 @@ import deals from './deals'
 import verifyAccount from './verifyAccount'
 import announcements from './announcements'
 import guest from './guest'
+import globalMenuItems from './globalMenuItems'
 
 const openTenderReducer = combineReducers({
   order,
@@ -61,6 +62,7 @@ const openTenderReducer = combineReducers({
   verifyAccount,
   announcements,
   guest,
+  globalMenuItems
 })
 
 export default openTenderReducer
