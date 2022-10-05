@@ -3,6 +3,7 @@ import { fulfill, MISSING_CUSTOMER, pending, reject } from '../../utils'
 import { entity, name } from '../../reducers/customer/recurrences'
 import { checkAuth } from './account'
 import { showNotification } from '../notifications'
+import { setAlert } from '../order'
 
 export const fetchCustomerRecurrences = () => async (
   dispatch,
@@ -31,18 +32,25 @@ export const removeRecurrence = (recurrenceId, callback) => async (
   const token = selectToken(getState())
   if (!token)
     return dispatch(reject(`${name}/remove${entity}`, MISSING_CUSTOMER))
+
+  const alert = { type: 'working', args: { text: 'Deleting Recurrence...' } }
+  dispatch(setAlert(alert))
   dispatch(pending(`${name}/remove${entity}`))
   try {
     const deleteResponse = await recurrenceApi.deleteRecurrence(recurrenceId, token)
     if (deleteResponse.success) {
       const recurrences = await recurrenceApi.getRecurrences(token)
+
       dispatch(fulfill(`${name}/remove${entity}`, recurrences))
       dispatch(showNotification('Subscription removed!'))
     } else {
       dispatch(reject(`${name}/remove${entity}`, deleteResponse))
     }
+    dispatch(setAlert({ type: 'close' }))
+
     if (callback) callback()
   } catch (err) {
+    dispatch(setAlert({ type: 'close' }))
     dispatch(checkAuth(err, () => reject(`${name}/remove${entity}`, err)))
   }
 }

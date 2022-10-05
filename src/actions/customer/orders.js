@@ -3,6 +3,7 @@ import { name, entity } from '../../reducers/customer/orders'
 import { selectToken } from '../../selectors/customer'
 import { checkAuth } from './account'
 import { showNotification } from '../notifications'
+import { setAlert } from '../order'
 
 // action creators
 
@@ -33,16 +34,20 @@ export const fetchCustomerOrders = limit => async (dispatch, getState) => {
 }
 
 export const deleteCustomerOrder = orderId => async (dispatch, getState) => {
-  const { recurrenceApi } = getState().config
+  const { api, recurrenceApi } = getState().config
   if (!recurrenceApi) return
   const token = selectToken(getState())
   if (!token) {
     dispatch(showNotification('There was an issue removing order! User is not authorized'))
   }
+  dispatch(pending(`${name}/remove${entity}`))
+  dispatch(setAlert({ type: 'working', args: { text: 'Cancelling Order...' } }))
   try {
     const response = await recurrenceApi.deleteOrder(orderId, token)
     if (!response.error) {
-      dispatch(fetchCustomerOrders(null)) //TODO this is probably not a good pattern .. should follow
+      const { data: orders } = await api.getCustomerOrders(token, null)
+      dispatch(fulfill(`${name}/remove${entity}`, orders))
+      dispatch(setAlert({ type: 'close' }))
       dispatch(showNotification('Order has been successfully removed'))
     } else {
       dispatch(showNotification('There was an issue removing order! Order was not deleted.'))
@@ -50,5 +55,4 @@ export const deleteCustomerOrder = orderId => async (dispatch, getState) => {
   } catch (err) {
     dispatch(showNotification('There was an issue removing order! Order was not deleted.'))
   }
-
 }

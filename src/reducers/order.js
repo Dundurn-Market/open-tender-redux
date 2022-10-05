@@ -57,6 +57,7 @@ export const SET_TABLE = `${NAME}/setTable`
 export const SET_PREP_TYPE = `${NAME}/setPrepType`
 export const SET_ADDRESS = `${NAME}/setAddress`
 export const SET_REQUESTED_AT = `${NAME}/setRequestedAt`
+export const SET_ORDER_BY = `${NAME}/setOrderWindow`
 export const SET_DEFAULT_ORDER_FREQ = `${NAME}/setDefaultSubscriptionFreq`
 export const SET_CART = `${NAME}/setCart`
 export const SET_CURRENT_VENDOR = `${NAME}/setCurrentVendor`
@@ -166,11 +167,14 @@ export default (state = initState, action) => {
       )
       return { ...state, requestedAt: action.payload, messages }
     }
+    case SET_ORDER_BY: {
+      return {...state, orderBy: action.payload}
+    }
     case SET_DEFAULT_ORDER_FREQ: {
       return { ...state, orderFrequency: action.payload}
     }
     case SET_REVENUE_CENTER: {
-      const revenueCenter = action.payload
+      const revenueCenter = {...action.payload, isScheduledGroceryCenter: action.payload.delivery_zone.priority === 1}
       const previousRequestedAt = state.requestedAt
       const requestedAt = makeFirstRequestedAt(
         revenueCenter,
@@ -214,7 +218,7 @@ export default (state = initState, action) => {
       return { ...state, cart, cartCounts }
     }
     case REMOVE_ITEM_BY_ID: {
-      const index = state.cart.findIndex((item) => item.id === action.payload.id)
+      const { index } = state.cart.find((item) => item.id === action.payload.id)
       const { cart, cartCounts } = removeItem([...state.cart], index)
       return { ...state, cart, cartCounts }
     }
