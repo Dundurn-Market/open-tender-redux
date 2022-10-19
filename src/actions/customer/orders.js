@@ -3,7 +3,7 @@ import { name, entity } from '../../reducers/customer/orders'
 import { selectToken } from '../../selectors/customer'
 import { checkAuth } from './account'
 import { showNotification } from '../notifications'
-import { setAlert } from '../order'
+import { addMessage, setAlert } from '../order'
 
 // action creators
 
@@ -48,7 +48,7 @@ export const deleteCustomerOrder = orderId => async (dispatch, getState) => {
       const { data: orders } = await api.getCustomerOrders(token, null)
       dispatch(fulfill(`${name}/remove${entity}`, orders))
       dispatch(setAlert({ type: 'close' }))
-      dispatch(showNotification('Order has been successfully removed'))
+      dispatch(addMessage('The order was successfully cancelled! Subscriptions relating to this order can be managed on the subscriptions page.'))
     } else {
       dispatch(showNotification('There was an issue removing order! Order was not deleted.'))
     }

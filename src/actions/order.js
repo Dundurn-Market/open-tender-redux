@@ -48,6 +48,7 @@ import {
 import { setMenuItems } from './menuItems'
 import { updateForm } from './checkout'
 import { resetMenuVars } from './menu'
+import { setCustomerRecurrences } from './customer'
 
 // action creators
 
@@ -275,7 +276,17 @@ export const editOrder = (order, openSidebar = true) => async (dispatch, getStat
     const revenueCenterId = revenue_center.revenue_center_id
     const revenueCenter = await api.getLocation(revenueCenterId)
     const menuItems = await api.getMenuItems(revenueCenterId, serviceType)
-    const recurrences = bearerToken? await recurrenceApi.getRecurrences(bearerToken) : []
+
+    let recurrences = getState().data.customer.recurrences.entities
+
+    if (recurrences.length === 0 && bearerToken) {
+      recurrences = await recurrenceApi.getRecurrences(bearerToken)
+      if (recurrences.error) {
+        recurrences = []
+      } else {
+        dispatch(setCustomerRecurrences(recurrences))
+      }
+    }
     const { cart, cartCounts } = rehydrateCartWithRecurrences(menuItems, order, recurrences)
     dispatch(setMenuItems(menuItems))
     const form = rehydrateCheckoutForm(order)
