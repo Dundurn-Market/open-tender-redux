@@ -192,7 +192,8 @@ export const submitOrder = () => async (dispatch, getState) => {
         cart: preparedOrder.cart,
         customer_id: preparedOrder.customer.customer_id,
         credit_card_ids: preparedOrder.tenders.map((tender) => tender.customer_card_id),
-        order_id: completedOrder.order_id
+        order_id: completedOrder.order_id,
+        address: preparedOrder.address
       }
 
       const orderId = getState().data.order.orderId

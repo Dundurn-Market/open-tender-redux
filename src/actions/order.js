@@ -43,7 +43,7 @@ import {
   CHECKOUT,
   SET_TABLE,
   SET_PREP_TYPE,
-  SET_DEFAULT_ORDER_FREQ, SET_ITEM_FREQUENCY, REMOVE_ITEM_BY_ID, SET_ORDER_BY
+  SET_DEFAULT_ORDER_FREQ, SET_ITEM_FREQUENCY, REMOVE_ITEM_BY_ID, SET_ORDER_WINDOW
 } from '../reducers/order'
 import { setMenuItems } from './menuItems'
 import { updateForm } from './checkout'
@@ -118,8 +118,8 @@ export const setRequestedAt = requestedAt => ({
   type: SET_REQUESTED_AT,
   payload: requestedAt,
 })
-export const setOrderBy = orderBy => ({
-  type: SET_ORDER_BY,
+export const setOrderWindow = orderBy => ({
+  type: SET_ORDER_WINDOW,
   payload: orderBy,
 })
 export const setDefaultOrderFrequency = orderFrequency => ({

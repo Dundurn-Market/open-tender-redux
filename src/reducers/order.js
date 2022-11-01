@@ -32,6 +32,7 @@ const initState = {
   alert: null,
   error: null,
   loading: 'idle',
+  orderWindow: null
 }
 
 const NAME = 'order'
@@ -57,7 +58,7 @@ export const SET_TABLE = `${NAME}/setTable`
 export const SET_PREP_TYPE = `${NAME}/setPrepType`
 export const SET_ADDRESS = `${NAME}/setAddress`
 export const SET_REQUESTED_AT = `${NAME}/setRequestedAt`
-export const SET_ORDER_BY = `${NAME}/setOrderWindow`
+export const SET_ORDER_WINDOW = `${NAME}/setOrderWindow`
 export const SET_DEFAULT_ORDER_FREQ = `${NAME}/setDefaultSubscriptionFreq`
 export const SET_CART = `${NAME}/setCart`
 export const SET_CURRENT_VENDOR = `${NAME}/setCurrentVendor`
@@ -165,10 +166,10 @@ export default (state = initState, action) => {
       const messages = state.messages.filter(
         i => !i.message.includes('Requested time')
       )
-      return { ...state, requestedAt: action.payload, messages }
+      return { ...state, requestedAt: action.payload, orderWindow: null, messages }
     }
-    case SET_ORDER_BY: {
-      return {...state, orderBy: action.payload}
+    case SET_ORDER_WINDOW: {
+      return {...state, orderWindow: action.payload}
     }
     case SET_DEFAULT_ORDER_FREQ: {
       return { ...state, orderFrequency: action.payload}

@@ -45,7 +45,7 @@ export const removeRecurrence = (recurrenceId, callback) => async (
     return dispatch(reject(`${name}/remove${entity}`, MISSING_CUSTOMER))
   }
 
-  const alert = { type: 'working', args: { text: 'Deleting Recurrence...' } }
+  const alert = { type: 'working', args: { text: 'Deleting Subscription...' } }
   dispatch(setAlert(alert))
   dispatch(pending(`${name}/remove${entity}`))
   try {
