@@ -25,7 +25,7 @@ export const fetchMenu = menuVars => async (dispatch, getState) => {
   const { api } = getState().config
   if (!api) return
   dispatch(pending(FETCH_MENU))
-  const { revenueCenterId, serviceType, requestedAt } = menuVars
+  const { revenueCenterId, serviceType, requestedAt, skipCartValidate } = menuVars
   try {
     if (requestedAt === null) {
       const err = getState().data.menu.error
@@ -38,13 +38,15 @@ export const fetchMenu = menuVars => async (dispatch, getState) => {
       sold_out_items: soldOut,
       revenue_centers: revenueCenters,
     } = menu
-    const { newCart, errors } = validateCart(cart, categories, soldOut)
-    if (errors) {
-      dispatch(setCartErrors(newCart, errors))
-      dispatch(setAlert({ type: 'cartErrors' }))
-    } else {
-      dispatch(setCart(newCart))
-      dispatch(resetCartErrors())
+    if (!skipCartValidate) {
+      const { newCart, errors } = validateCart(cart, categories, soldOut)
+      if (errors) {
+        dispatch(setCartErrors(newCart, errors))
+        dispatch(setAlert({ type: 'cartErrors' }))
+      } else {
+        dispatch(setCart(newCart))
+        dispatch(resetCartErrors())
+      }
     }
     dispatch(
       fulfill(FETCH_MENU, { categories, soldOut, revenueCenters, menuVars })
