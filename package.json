@@ -1,6 +1,6 @@
 {
   "name": "@open-tender/redux",
-  "version": "3.0.14",
+  "version": "3.0.15",
   "description": "A set of reducers, actions, and action creators for managing state in Open Tender apps",
   "main": "dist/main.js",
   "author": "JC Harrington <jc@opentender.io> (https://www.opentender.io)",
