@@ -152,7 +152,5 @@ export const selectPointsProgram = state => {
 }
 
 export const selectCustomerRecurrences = state => {
-  return state.data.customer.recurrences.entities
+  return state.data.customer.recurrences
 }
-
-export const selectCustomerRecurrencesLoadingStatus = state => state.data.customer.recurrences.loading

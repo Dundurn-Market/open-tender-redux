@@ -17,6 +17,7 @@ export const setRevenueCenters = revenueCenters => ({
 
 // async action creators
 
+//TODO THIS IS NEVER USED .. Use fetchLocations
 export const fetchRevenueCenters =
   ({ type, is_outpost, lat, lng, requestedAt }) =>
   async (dispatch, getState) => {

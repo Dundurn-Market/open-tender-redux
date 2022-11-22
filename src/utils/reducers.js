@@ -21,6 +21,7 @@ export const entitiesReducer = (state = initState, action, name, entity) => {
       return {
         ...state,
         entities: action.payload,
+        last_updated: new Date(),
         loading: 'idle',
         error: null,
       }

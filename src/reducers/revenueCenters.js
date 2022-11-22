@@ -38,6 +38,7 @@ export default (state = initState, action) => {
       return {
         ...state,
         revenueCenters: action.payload,
+        last_updated: new Date(),
         loading: 'idle',
         error: null,
       }
