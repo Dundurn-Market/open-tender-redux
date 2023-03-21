@@ -16,6 +16,7 @@ export default (state = initState, action) => {
       return {
         ...state,
         entities: action.payload,
+        last_updated: new Date(),
         loading: 'idle',
         error: null,
       }
