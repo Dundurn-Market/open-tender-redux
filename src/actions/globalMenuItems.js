@@ -9,16 +9,24 @@ export const fetchGlobalMenuItems = () => async (
   if (!api) return
   dispatch(pending(FETCH_GLOBAL_MENU_ITEMS))
   try {
+    const revenueCenters = await api.getRevenueCenters('OLO')
+    const revenueCenterIds = revenueCenters.data.map((i) => i.revenue_center_id)
 
-    const strathconaMenuItems = await api.getMenuItems(1502, 'PICKUP') //strathcona mrkt pickup
-    const deliveryMenuItems = await api.getMenuItems(1506, 'DELIVERY') //hamilton delivery zone
+    const menuItems = await revenueCenterIds.reduce(
+      async (aggregate, i) => {
+        const current = await aggregate
+        const rcItems = [
+          ...(await api.getMenuItems(i, 'PICKUP')),
+          ...(await api.getMenuItems(i, 'DELIVERY')),
+        ]
 
-    let menuItems = [...strathconaMenuItems]
-    deliveryMenuItems.forEach((item) => {
-      if (!menuItems.find((i) => i.id === item.id)) {
-        menuItems.push(item)
-      }
-    })
+        current.push(
+          ...rcItems.filter((n) => !(current.find((m) => m.id === n.id))),
+        )
+        return current
+      },
+      [],
+    )
     dispatch(fulfill(FETCH_GLOBAL_MENU_ITEMS, menuItems))
   } catch (err) {
     dispatch(reject(FETCH_GLOBAL_MENU_ITEMS, err))

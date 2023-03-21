@@ -34,6 +34,43 @@ export const setCustomerRecurrences = recurrences => ({
   payload: recurrences,
 })
 
+export const updateRecurrence = (item) => async (
+  dispatch,
+  getState
+) => {
+  const { recurrenceApi } = getState().config
+  if (!recurrenceApi) return
+
+  const token = selectToken(getState())
+  if (!token) {
+    return dispatch(reject(`${name}/update${entity}`, MISSING_CUSTOMER))
+  }
+
+  const alert = { type: 'working', args: { text: 'Updating Subscription...' } }
+  dispatch(setAlert(alert))
+  dispatch(pending(`${name}/update${entity}`))
+  try {
+    const updateResponse = await recurrenceApi.postRecurrence(item, token)
+    if (updateResponse.success) {
+      const recurrences = await recurrenceApi.getRecurrences(token)
+
+      if (recurrences.error) {
+        logRecurrenceError(dispatch, recurrences.error)
+        return dispatch(reject(`${name}/update${entity}`, recurrences.error))
+      }
+
+      dispatch(fulfill(`${name}/update${entity}`, recurrences))
+      dispatch(showNotification('Subscription updated!'))
+    } else {
+      dispatch(reject(`${name}/update${entity}`, updateResponse))
+    }
+    dispatch(setAlert({ type: 'close' }))
+  } catch (err) {
+    dispatch(setAlert({ type: 'close' }))
+    dispatch(checkAuth(err, () => reject(`${name}/update${entity}`, err)))
+  }
+}
+
 export const removeRecurrence = (recurrenceId, callback) => async (
   dispatch,
   getState

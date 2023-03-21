@@ -190,6 +190,13 @@ export const submitOrder = () => async (dispatch, getState) => {
     if (hasRecurrences && auth) {
       const bearerToken = getState().data.customer.account.auth.access_token;
 
+      const items = preparedOrder.cart
+      const recurrences = getState().data.customer.recurrences.entities
+      const itemRecurrences = recurrences.filter(
+        (r) => items.find((i) => i.recurrence_id === r.id),
+      )
+      const nextOrderId = itemRecurrences.find((r) => !!r.next_order_id)?.next_order_id
+
       const data = {
         revenue_center_id: preparedOrder.revenue_center_id,
         service_type: preparedOrder.service_type,
@@ -201,11 +208,11 @@ export const submitOrder = () => async (dispatch, getState) => {
         address: preparedOrder.address
       }
 
-      const orderId = getState().data.order.orderId
+      const orderId = nextOrderId || getState().data.order.orderId
       if (orderId) {
-        const recurrenceResponse = await recurrenceApi.editOrder(orderId, data, bearerToken)
+        await recurrenceApi.editOrder(orderId, data, bearerToken)
       } else {
-        const recurrenceResponse = await recurrenceApi.postOrder(data, bearerToken)
+        await recurrenceApi.postOrder(data, bearerToken)
       }
       dispatch(fetchCustomerRecurrences())
       dispatch(fetchCustomerOrders())
